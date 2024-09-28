@@ -1,0 +1,227 @@
+---
+title: "7CBEm"
+author: "pslacerda"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(ggplot2)
+library(stringr)
+library(viridis)
+library(tidyr)
+```
+
+```{r}
+EIXOS = c(
+  "Eixo 1 – Educação Escolar dos Povos Originários, Ancestrais e Tradicionais",
+  "Eixo 2 – Etnomatemática na Educação Básica",
+  "Eixo 3 – Etnomatemática na Educação Superior",
+  "Eixo 4 – Etnomatemática e suas vertentes na Educação Matemática",
+  "Eixo 5 – Etnomatemática e Relações Étnico-Raciais",
+  "Eixo 6 – Práticas Pedagógicas e Pesquisas em Ciências e Matemática",
+  "Eixo 7 – Conhecimentos Ancestrais em Ciências: Diálogos Interculturais"
+)
+
+MODALIDADES = c(
+  "Comunicação oral",
+  "Pôster"
+)
+
+F = read.csv("frequencias.csv") %>%
+  mutate(
+    Pdf = Pdf,
+    Eixo = str_remove(Eixo, " Temático"),
+    Eixo = str_remove(Eixo, "\\."),
+    Eixo = str_replace(Eixo, "-", "–"),
+    Eixo = Eixo,
+    Modalidade = Modalidade,
+    Termo = Termo
+  )
+
+T = read.csv("trabalhos.csv") %>%
+  mutate(
+    Pdf = Pdf,
+    Eixo = str_remove(Eixo, " Temático"),
+    Eixo = str_remove(Eixo, "\\."),
+    Eixo = str_replace(Eixo, "-", "–"),
+    Eixo = Eixo,
+    Modalidade = Modalidade
+  )
+
+I = read.csv("instituicoes.csv") %>%
+  transmute(
+    Pdf = str_replace(ARTIGO, ".*/", ""),
+    Pdf = Pdf,
+    Autor = AUTOR,
+    Instituição = INSTITUIÇÃO,
+    Estado = UF
+  )
+
+Nordeste = c("AL", "BA", "CE", "MA", "PB", "PE", "PI", "RN", "SE")
+```
+
+```{r}
+T %>%
+  mutate(
+    Eixo = str_replace(Eixo,".*(\\d).*", "\\1")
+  ) %>%
+  ggplot(aes(x=Eixo, fill=Modalidade)) +
+  geom_bar() +
+  labs(
+    title = "Produção por Eixo",
+    subtitle = "Anais do 7º CBEm",
+    y = "Contagem"
+  )
+
+merge(I, T) %>%
+  filter(
+    !is.na(Estado)
+  ) %>%
+  group_by(Pdf) %>%
+  mutate(
+    Região = ifelse(Estado %in% Nordeste, "Nordeste", "Outra"),
+    Eixo = str_replace(Eixo,".*(\\d).*", "\\1")
+  ) %>%
+  group_by(Região, Eixo) %>%
+  tally() %>%
+  ggplot(aes(y = Eixo, x = n, fill = Região)) +
+  geom_bar(stat = "identity", position = position_stack()) +
+  labs(
+    title = "Autores na Região Nordeste",
+    x = "Autores"
+  )
+```
+
+```{r, fig.dim=c(8,8)}
+merge(F, I, all = TRUE) %>%
+  group_by(Pdf) %>%
+  filter(
+    any(Estado %in% Nordeste),
+    Tipo == "Unigram"
+  ) %>%
+  group_by(Pdf, Termo) %>%
+  filter(
+    Autor == Autor[1]
+  ) %>%
+  select(-Autor) %>%
+  count(Pdf, Eixo, Modalidade, Termo) %>%
+  group_by(Pdf, Eixo, Modalidade) %>%
+  mutate(
+    Proporção = n / sum(n),
+    Proporção = ifelse(is.na(Proporção), 0, Proporção)
+  ) %>%
+  ungroup() %>%
+  complete(Pdf, Eixo, Modalidade, Termo, fill=list(Proporção=0), explicit=TRUE) %>%
+  ungroup() %>%
+  group_by(Eixo, Modalidade, Termo) %>%
+  summarise(
+    Proporção = mean(Proporção)
+  ) %>%
+  arrange(-Proporção) %>%
+  filter(
+    row_number() <= 10,
+    Proporção > 0
+  ) %>%
+  group_by(Termo) %>%
+  mutate(
+    n = n()
+  ) %>%
+  ggplot(aes(y = reorder(Termo, n), x = Proporção, fill = Eixo)) +
+  geom_bar(stat='identity', position = 'stack') +
+  scale_fill_viridis(discrete=TRUE, option="turbo") +
+  facet_wrap(Modalidade ~ ., scales = "free") +
+  labs(
+    title = "Corpus textual",
+    subtitle = "Anais 7º CBEm",
+    y = "Termos",
+    X = "Proporção"
+  ) +
+  theme(
+    legend.position="bottom",
+    legend.direction = "vertical"
+  )
+```
+
+
+```{r, fig.dim=c(8,8)}
+merge(F, I, all = TRUE) %>%
+  group_by(Pdf) %>%
+  filter(
+    any(Estado %in% Nordeste),
+    Tipo == "Bigram"
+  ) %>%
+  group_by(Pdf, Termo) %>%
+  filter(
+    Autor == Autor[1]
+  ) %>%
+  select(-Autor) %>%
+  count(Pdf, Eixo, Modalidade, Termo) %>%
+  group_by(Pdf, Eixo, Modalidade) %>%
+  mutate(
+    Proporção = n / sum(n),
+    Proporção = ifelse(is.na(Proporção), 0, Proporção)
+  ) %>%
+  ungroup() %>%
+  complete(Pdf, Eixo, Modalidade, Termo, fill=list(Proporção=0), explicit=TRUE) %>%
+  ungroup() %>%
+  group_by(Eixo, Modalidade, Termo) %>%
+  summarise(
+    Proporção = mean(Proporção)
+  ) %>%
+  arrange(-Proporção) %>%
+  filter(
+    row_number() <= 10,
+    Proporção > 0
+  ) %>%
+  group_by(Termo) %>%
+  mutate(
+    n = n()
+  ) %>%
+  ggplot(aes(y = reorder(Termo, n), x = Proporção, fill = Eixo)) +
+  geom_bar(stat='identity', position = 'stack') +
+  scale_fill_viridis(discrete=TRUE, option="turbo") +
+  facet_wrap(Modalidade ~ ., scales = "free") +
+  labs(
+    title = "Corpus textual",
+    subtitle = "Anais 7º CBEm",
+    y = "Termos",
+    X = "Proporção"
+  ) +
+  theme(
+    legend.position="bottom",
+    legend.direction = "vertical"
+  )
+```
+
+```{r}
+merge(I, T) %>%
+  filter(
+    Estado %in% Nordeste
+  ) %>%
+  select(Autor, Estado, Eixo, Modalidade) %>%
+  distinct() %>%
+  ggplot(aes(Estado, fill = Eixo)) +
+  geom_bar(position = "stack") +
+  scale_x_discrete(drop = FALSE) +
+  scale_fill_viridis(discrete=TRUE, option="turbo") +
+  facet_grid(. ~ Modalidade) +
+  labs(
+    y = "Total"
+  ) +
+  theme(
+    legend.position="bottom",
+    legend.direction = "vertical"
+  )
+
+I %>%
+  filter(
+    Estado %in% Nordeste
+  ) %>%
+  select(Autor, Instituição) %>%
+  distinct() %>%
+  ggplot(aes(Instituição)) +
+  geom_bar()
+```
