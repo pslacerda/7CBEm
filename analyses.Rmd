@@ -5,15 +5,22 @@ date: "`r Sys.Date()`"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
+# Inicialização
+```{r setup}
 knitr::opts_chunk$set(echo = TRUE)
 library(dplyr)
 library(ggplot2)
 library(stringr)
 library(viridis)
 library(tidyr)
+library(ggraph)
+library(igraph)
+library(topicmodels)
+library(tidytext)
+library(scales)
 ```
 
+# Leitura e tratamento dos dados
 ```{r}
 EIXOS = c(
   "Eixo 1 – Educação Escolar dos Povos Originários, Ancestrais e Tradicionais",
@@ -63,19 +70,8 @@ I = read.csv("instituicoes.csv") %>%
 Nordeste = c("AL", "BA", "CE", "MA", "PB", "PE", "PI", "RN", "SE")
 ```
 
+# Produções por Estado, Instituição e Autor
 ```{r}
-T %>%
-  mutate(
-    Eixo = str_replace(Eixo,".*(\\d).*", "\\1")
-  ) %>%
-  ggplot(aes(x=Eixo, fill=Modalidade)) +
-  geom_bar() +
-  labs(
-    title = "Produção por Eixo",
-    subtitle = "Anais do 7º CBEm",
-    y = "Contagem"
-  )
-
 merge(I, T) %>%
   filter(
     !is.na(Estado)
@@ -88,13 +84,45 @@ merge(I, T) %>%
   group_by(Região, Eixo) %>%
   tally() %>%
   ggplot(aes(y = Eixo, x = n, fill = Região)) +
-  geom_bar(stat = "identity", position = position_stack()) +
+  geom_bar(stat = "identity", position = position_dodge2(preserve = "single")) +
   labs(
-    title = "Autores na Região Nordeste",
+    title = "Produção por Autor",
+    subtitle = "Destaque à região Nordeste",
     x = "Autores"
   )
+
+merge(I, T) %>%
+  filter(
+    Estado %in% Nordeste
+  ) %>%
+  select(Autor, Estado, Eixo, Modalidade) %>%
+  distinct() %>%
+  ggplot(aes(Estado, fill = Eixo)) +
+  geom_bar(position = "stack") +
+  scale_x_discrete(drop = FALSE) +
+  scale_fill_viridis(discrete=TRUE, option="turbo") +
+  facet_grid(. ~ Modalidade) +
+  labs(
+    y = "Total"
+  ) +
+  theme(
+    legend.position="bottom",
+    legend.direction = "vertical"
+  )
+
+I %>%
+  filter(
+    Estado %in% Nordeste
+  ) %>%
+  select(Autor, Instituição) %>%
+  distinct() %>%
+  ggplot(aes(Instituição)) +
+  geom_bar()
 ```
 
+# Frequência de termos
+
+## Unigramas
 ```{r, fig.dim=c(8,8)}
 merge(F, I, all = TRUE) %>%
   group_by(Pdf) %>%
@@ -129,7 +157,7 @@ merge(F, I, all = TRUE) %>%
   mutate(
     n = n()
   ) %>%
-  ggplot(aes(y = reorder(Termo, n), x = Proporção, fill = Eixo)) +
+  ggplot(aes(y = Termo, x = Proporção, fill = Eixo)) +
   geom_bar(stat='identity', position = 'stack') +
   scale_fill_viridis(discrete=TRUE, option="turbo") +
   facet_wrap(Modalidade ~ ., scales = "free") +
@@ -145,7 +173,7 @@ merge(F, I, all = TRUE) %>%
   )
 ```
 
-
+## Bigramas
 ```{r, fig.dim=c(8,8)}
 merge(F, I, all = TRUE) %>%
   group_by(Pdf) %>%
@@ -158,16 +186,16 @@ merge(F, I, all = TRUE) %>%
     Autor == Autor[1]
   ) %>%
   select(-Autor) %>%
-  count(Pdf, Eixo, Modalidade, Termo) %>%
-  group_by(Pdf, Eixo, Modalidade) %>%
+  count(Pdf, Modalidade, Eixo, Termo) %>%
+  group_by(Pdf) %>%
   mutate(
     Proporção = n / sum(n),
     Proporção = ifelse(is.na(Proporção), 0, Proporção)
   ) %>%
   ungroup() %>%
-  complete(Pdf, Eixo, Modalidade, Termo, fill=list(Proporção=0), explicit=TRUE) %>%
+  complete(Pdf, Modalidade, Eixo, Termo, fill=list(Proporção=0), explicit=TRUE) %>%
   ungroup() %>%
-  group_by(Eixo, Modalidade, Termo) %>%
+  group_by(Modalidade, Eixo, Termo) %>%
   summarise(
     Proporção = mean(Proporção)
   ) %>%
@@ -180,8 +208,8 @@ merge(F, I, all = TRUE) %>%
   mutate(
     n = n()
   ) %>%
-  ggplot(aes(y = reorder(Termo, n), x = Proporção, fill = Eixo)) +
-  geom_bar(stat='identity', position = 'stack') +
+  ggplot(aes(y = Termo, x = Proporção, fill = Eixo)) +
+  geom_bar(stat='identity', position = position_stack()) +
   scale_fill_viridis(discrete=TRUE, option="turbo") +
   facet_wrap(Modalidade ~ ., scales = "free") +
   labs(
@@ -196,32 +224,87 @@ merge(F, I, all = TRUE) %>%
   )
 ```
 
-```{r}
-merge(I, T) %>%
+
+### Correlação de bigramas
+```{r, fig.dim=c(8,8)}
+merge(F, I, all = TRUE) %>%
+  group_by(Pdf) %>%
   filter(
-    Estado %in% Nordeste
+    any(Estado %in% Nordeste),
+    Tipo == "Bigram"
   ) %>%
-  select(Autor, Estado, Eixo, Modalidade) %>%
-  distinct() %>%
-  ggplot(aes(Estado, fill = Eixo)) +
-  geom_bar(position = "stack") +
-  scale_x_discrete(drop = FALSE) +
-  scale_fill_viridis(discrete=TRUE, option="turbo") +
-  facet_grid(. ~ Modalidade) +
-  labs(
-    y = "Total"
+  group_by(Pdf, Termo) %>%
+  filter(
+    Autor == Autor[1]
+  ) %>%
+  select(-Autor) %>%
+  count(Pdf, Modalidade, Eixo, Termo) %>%
+  separate(Termo, c("Palavra1", "Palavra2"), sep = " ") %>%
+  ungroup() %>%
+  select(Palavra1, Palavra2, n) %>%
+  filter(n > 7) %>%
+  graph_from_data_frame() %>%
+  ggraph(layout = "kk") +
+  geom_node_point(alpha=0) +
+  geom_edge_link(
+    # show.legend = FALSE,
+    arrow = grid::arrow(type = "closed", length = unit(.15, "inches"))
   ) +
-  theme(
-    legend.position="bottom",
-    legend.direction = "vertical"
-  )
+  geom_node_text(aes(label = name)) +
+  theme_void()
+```
+
+# Redes sociais
+```{r, fig.dim=c(15, 15)}
+
+edges = c()
+
+add_edges = function(df) {
+  df = df %>% distinct(Instituição)
+  for (i in 1:nrow(df)) {
+    for (j in 1:nrow(df)) {
+      i1 = df$Instituição[i]
+      i2 = df$Instituição[j]
+      if (i < j && i1 != i2) {
+        edges <<- c(edges, df$Instituição[i], df$Instituição[j])
+      }
+    }
+  }
+}
 
 I %>%
-  filter(
-    Estado %in% Nordeste
+  filter(Instituição != "") %>%
+  select(Pdf, Instituição) %>%
+  group_by(Pdf) %>%
+  group_walk( ~ add_edges(.x))
+
+g <- make_graph(edges, directed = FALSE)
+
+g_simple = simplify(g)
+E(g_simple)$weigth = sapply(E(g_simple), function(e) {
+  length(all_shortest_paths(g, from=ends(g_simple, e)[1], to=ends(g_simple, e)[2])$res)
+})
+
+subgraph(g, c(V(g)["IFRR", "Escola Municipal Indígena Vovó Tereza Januário"]))
+
+
+is_nordeste = left_join(
+  as_tibble(list(Instituição=V(g)$name)),
+  I %>%
+    distinct(Instituição, .keep_all = TRUE)
+) %>%
+  select(Instituição, Estado) %>%
+  transmute(
+    IsNordeste = Estado %in% Nordeste
   ) %>%
-  select(Autor, Instituição) %>%
-  distinct() %>%
-  ggplot(aes(Instituição)) +
-  geom_bar()
+  pull
+
+plot(
+  g_simple,
+  layout = layout_with_kk,
+  edge.width=E(g_simple)$weigth * 5,
+  edge.label=E(g_simple)$weigth,
+  edge.label.cex=2,
+  vertex.color = factor(is_nordeste)
+)
 ```
