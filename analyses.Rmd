@@ -18,6 +18,7 @@ library(igraph)
 library(topicmodels)
 library(tidytext)
 library(scales)
+library(forcats)
 ```
 
 # Leitura e tratamento dos dados
@@ -116,7 +117,7 @@ I %>%
   ) %>%
   select(Autor, Instituição) %>%
   distinct() %>%
-  ggplot(aes(Instituição)) +
+  ggplot(aes(y = Instituição)) +
   geom_bar()
 ```
 
@@ -201,7 +202,7 @@ merge(F, I, all = TRUE) %>%
   ) %>%
   arrange(-Proporção) %>%
   filter(
-    row_number() <= 10,
+    row_number() <= 5,
     Proporção > 0
   ) %>%
   group_by(Termo) %>%
@@ -305,4 +306,66 @@ plot(
   edge.label.cex=2,
   vertex.color = factor(is_nordeste)
 )
+```
+
+# Tf-Idf
+
+## Unigramas
+```{r, fig.dim=c(8, 8)}
+grupo_termos = merge(F, I, all = TRUE) %>%
+  group_by(Pdf) %>%
+  mutate(
+    Eixo = str_replace(Eixo, "(\\d).*", "\\1")
+  ) %>%
+  filter(
+    any(Estado %in% Nordeste),
+    Tipo == "Unigram"
+  ) %>%
+  group_by(Pdf) %>%
+  filter(Autor == Autor[1]) %>%
+  select(-Autor) %>%
+  count(Pdf, Eixo, Termo, sort = TRUE)
+  
+grupo_tfidf = grupo_termos %>%
+  bind_tf_idf(Termo, Eixo, n) %>%
+  arrange(-tf_idf)
+
+grupo_tfidf %>%
+  group_by(Eixo) %>%
+  slice_max(tf_idf, n = 10) %>%
+    ungroup() %>%
+  ggplot(aes(tf_idf, fct_reorder(Termo, tf_idf))) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~Eixo, scales = "free") +
+  labs(x = "tf-idf", y = NULL)
+```
+
+## Bigramas
+```{r, fig.dim=c(8, 8)}
+grupo_termos = merge(F, I, all = TRUE) %>%
+  group_by(Pdf) %>%
+  mutate(
+    Eixo = str_replace(Eixo, "(\\d).*", "\\1")
+  ) %>%
+  filter(
+    any(Estado %in% Nordeste),
+    Tipo == "Bigram"
+  ) %>%
+  group_by(Pdf) %>%
+  filter(Autor == Autor[1]) %>%
+  select(-Autor) %>%
+  count(Pdf, Eixo, Termo, sort = TRUE)
+  
+grupo_tfidf = grupo_termos %>%
+  bind_tf_idf(Termo, Eixo, n) %>%
+  arrange(-tf_idf)
+
+grupo_tfidf %>%
+  group_by(Eixo) %>%
+  slice_max(tf_idf, n = 10) %>%
+  ungroup() %>%
+  ggplot(aes(tf_idf, fct_reorder(Termo, tf_idf))) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~Eixo, scales = "free") +
+  labs(x = "tf-idf", y = NULL)
 ```

@@ -18,6 +18,8 @@ pt_stopwords = stopwords.words("portuguese") + [
     '8',
     "13",
     'c',
+    "c."
+    "a."
     'p.',
     'm.',
     'f.',
@@ -28,11 +30,14 @@ pt_stopwords = stopwords.words("portuguese") + [
     "'s",
     "k.",
     "l.",
+    "cm",
     "nao",
+    "sao",
     "2022.",
     "2023",
-    "figura"
-] + [c for c in '.,-––()":*a“”;[]%#&;;;\'!@<>=?1234567890$']
+    "figura",
+    "et"
+] + [c for c in '.,-––()":*a“”;[]%#&;;;\'!@<>=?1234567890$db']
 
 
 T = pd.read_csv("trabalhos.csv")
@@ -67,12 +72,23 @@ def process_words_2gram(words):
                 "culturalmente relevante",
                 "arquivo pessoal",
                 "knijnik et",
+                "a. lorenzoni",
                 "primeira autora",
                 "acervo proprio",
                 "referido autor",
                 "vai dar",
                 "duas variaveis",
-                "colega sentado"
+                "colega sentado",
+                "sao raimundo",
+                "sao luis",
+                "sao domingos"
+                "raimundo nonato",
+                "candomble pode",
+                "campo maior",
+                "buzios abertos",
+                "educacao culturalmente",
+                "/ /",
+                "/ voce"
             ]
     ]
 
