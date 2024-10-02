@@ -245,16 +245,17 @@ merge(F, I, all = TRUE) %>%
   filter(n > 7) %>%
   graph_from_data_frame() %>%
   ggraph(layout = "kk") +
-  geom_node_point(alpha=0) +
+  geom_node_point(alpha=0, size = 5) +
   geom_edge_link(
-    # show.legend = FALSE,
+    aes(color = "red"),
+    show.legend = FALSE,
     arrow = grid::arrow(type = "closed", length = unit(.15, "inches"))
   ) +
   geom_node_text(aes(label = name)) +
   theme_void()
 ```
 
-# Redes sociais
+# Redes de colaborações
 ```{r, fig.dim=c(15, 15)}
 
 edges = c()
@@ -284,9 +285,6 @@ g_simple = simplify(g)
 E(g_simple)$weigth = sapply(E(g_simple), function(e) {
   length(all_shortest_paths(g, from=ends(g_simple, e)[1], to=ends(g_simple, e)[2])$res)
 })
-
-subgraph(g, c(V(g)["IFRR", "Escola Municipal Indígena Vovó Tereza Januário"]))
-
 
 is_nordeste = left_join(
   as_tibble(list(Instituição=V(g)$name)),

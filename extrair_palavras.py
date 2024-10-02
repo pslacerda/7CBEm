@@ -31,7 +31,7 @@ pt_stopwords = stopwords.words("portuguese") + [
     "nao",
     "2022.",
     "2023",
-    "cm",
+    "figura"
 ] + [c for c in '.,-––()":*a“”;[]%#&;;;\'!@<>=?1234567890$']
 
 
@@ -68,7 +68,11 @@ def process_words_2gram(words):
                 "arquivo pessoal",
                 "knijnik et",
                 "primeira autora",
-                "acervo proprio"
+                "acervo proprio",
+                "referido autor",
+                "vai dar",
+                "duas variaveis",
+                "colega sentado"
             ]
     ]
 
