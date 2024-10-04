@@ -36,8 +36,9 @@ pt_stopwords = stopwords.words("portuguese") + [
     "2022.",
     "2023",
     "figura",
-    "et"
-] + [c for c in '.,-––()":*a“”;[]%#&;;;\'!@<>=?1234567890$db']
+    "et",
+    "ai"
+] + [c for c in '.,-––()":*a“”;[]%#&;;;\'!@<>=?1234567890$db/']
 
 
 T = pd.read_csv("trabalhos.csv")
@@ -76,19 +77,19 @@ def process_words_2gram(words):
                 "primeira autora",
                 "acervo proprio",
                 "referido autor",
+                "consideracoes finais",
                 "vai dar",
                 "duas variaveis",
                 "colega sentado",
                 "sao raimundo",
                 "sao luis",
-                "sao domingos"
+                "sao domingos",
                 "raimundo nonato",
                 "candomble pode",
                 "campo maior",
-                "buzios abertos",
                 "educacao culturalmente",
                 "/ /",
-                "/ voce"
+                "/ voce",
             ]
     ]
 

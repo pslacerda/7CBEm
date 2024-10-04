@@ -1,0 +1,304 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd"><key id="d1" for="edge" attr.name="weight" attr.type="long"/>
+<key id="d0" for="node" attr.name="color" attr.type="string"/>
+<graph edgedefault="undirected"><node id="Municipal, RJ">
+  <data key="d0">SUDESTE</data>
+</node>
+<node id="UFRRJ">
+  <data key="d0">SUDESTE</data>
+</node>
+<node id="UFF">
+  <data key="d0">SUDESTE</data>
+</node>
+<node id="IFAP">
+  <data key="d0">NORTE</data>
+</node>
+<node id="UNL">
+  <data key="d0">white</data>
+</node>
+<node id="UFAP">
+  <data key="d0">NORTE</data>
+</node>
+<node id="UNIFAP">
+  <data key="d0">NORTE</data>
+</node>
+<node id="UEAP">
+  <data key="d0">NORTE</data>
+</node>
+<node id="Estadual, RS">
+  <data key="d0">SUL</data>
+</node>
+<node id="PUCRS">
+  <data key="d0">SUL</data>
+</node>
+<node id="UFVJM">
+  <data key="d0">SUDESTE</data>
+</node>
+<node id="IFRJ">
+  <data key="d0">SUDESTE</data>
+</node>
+<node id="IFAM">
+  <data key="d0">NORTE</data>
+</node>
+<node id="SEEDUC">
+  <data key="d0">SUDESTE</data>
+</node>
+<node id="FURG">
+  <data key="d0">SUL</data>
+</node>
+<node id="UFPA">
+  <data key="d0">NORTE</data>
+</node>
+<node id="UFMS">
+  <data key="d0">CENTROOESTE</data>
+</node>
+<node id="UNESP">
+  <data key="d0">SUDESTE</data>
+</node>
+<node id="UNEMAT">
+  <data key="d0">CENTROOESTE</data>
+</node>
+<node id="UNIFESSPA">
+  <data key="d0">NORTE</data>
+</node>
+<node id="EtnoMatemaTicas Brasis">
+  <data key="d0">NORDESTE</data>
+</node>
+<node id="UEFS">
+  <data key="d0">NORDESTE</data>
+</node>
+<node id="UNIR">
+  <data key="d0">NORTE</data>
+</node>
+<node id="UNICAMP">
+  <data key="d0">SUDESTE</data>
+</node>
+<node id="Estadual, PR">
+  <data key="d0">SUL</data>
+</node>
+<node id="UEM">
+  <data key="d0">SUL</data>
+</node>
+<node id="UFGD">
+  <data key="d0">CENTROOESTE</data>
+</node>
+<node id="UFMA">
+  <data key="d0">NORDESTE</data>
+</node>
+<node id="UFSCar">
+  <data key="d0">SUDESTE</data>
+</node>
+<node id="IFMA">
+  <data key="d0">NORDESTE</data>
+</node>
+<node id="UEPB">
+  <data key="d0">NORDESTE</data>
+</node>
+<node id="UEMA">
+  <data key="d0">NORDESTE</data>
+</node>
+<node id="UFU">
+  <data key="d0">SUDESTE</data>
+</node>
+<node id="IFRN">
+  <data key="d0">NORDESTE</data>
+</node>
+<node id="UFRN">
+  <data key="d0">NORDESTE</data>
+</node>
+<node id="UFC">
+  <data key="d0">NORDESTE</data>
+</node>
+<node id="UNILAB">
+  <data key="d0">NORDESTE</data>
+</node>
+<node id="IFES">
+  <data key="d0">SUDESTE</data>
+</node>
+<node id="UFES">
+  <data key="d0">SUDESTE</data>
+</node>
+<node id="UFOP">
+  <data key="d0">SUDESTE</data>
+</node>
+<node id="UFT">
+  <data key="d0">NORTE</data>
+</node>
+<node id="UFRB">
+  <data key="d0">NORDESTE</data>
+</node>
+<node id="UFNT">
+  <data key="d0">NORTE</data>
+</node>
+<node id="UFAM">
+  <data key="d0">NORTE</data>
+</node>
+<node id="UESB">
+  <data key="d0">NORDESTE</data>
+</node>
+<node id="IFRR">
+  <data key="d0">NORTE</data>
+</node>
+<node id="Municipal, RR">
+  <data key="d0">NORTE</data>
+</node>
+<node id="USP">
+  <data key="d0">SUDESTE</data>
+</node>
+<node id="UFG">
+  <data key="d0">CENTROOESTE</data>
+</node>
+<node id="UnB">
+  <data key="d0">CENTROOESTE</data>
+</node>
+<edge source="Municipal, RJ" target="UFRRJ">
+  <data key="d1">1</data>
+</edge>
+<edge source="UFRRJ" target="UFF">
+  <data key="d1">1</data>
+</edge>
+<edge source="UFRRJ" target="IFAP">
+  <data key="d1">1</data>
+</edge>
+<edge source="UFRRJ" target="UNL">
+  <data key="d1">1</data>
+</edge>
+<edge source="UFF" target="UFVJM">
+  <data key="d1">2</data>
+</edge>
+<edge source="UFF" target="IFAP">
+  <data key="d1">1</data>
+</edge>
+<edge source="UFF" target="IFRJ">
+  <data key="d1">1</data>
+</edge>
+<edge source="UFF" target="IFAM">
+  <data key="d1">1</data>
+</edge>
+<edge source="UFF" target="SEEDUC">
+  <data key="d1">1</data>
+</edge>
+<edge source="IFAP" target="UNIFAP">
+  <data key="d1">2</data>
+</edge>
+<edge source="IFAP" target="UEAP">
+  <data key="d1">2</data>
+</edge>
+<edge source="IFAP" target="UNL">
+  <data key="d1">1</data>
+</edge>
+<edge source="UNL" target="UNIFESSPA">
+  <data key="d1">1</data>
+</edge>
+<edge source="UFAP" target="UNIFAP">
+  <data key="d1">1</data>
+</edge>
+<edge source="UNIFAP" target="UEAP">
+  <data key="d1">2</data>
+</edge>
+<edge source="Estadual, RS" target="PUCRS">
+  <data key="d1">1</data>
+</edge>
+<edge source="SEEDUC" target="UFPA">
+  <data key="d1">1</data>
+</edge>
+<edge source="FURG" target="UFPA">
+  <data key="d1">1</data>
+</edge>
+<edge source="UFMS" target="UNESP">
+  <data key="d1">1</data>
+</edge>
+<edge source="UFMS" target="UNEMAT">
+  <data key="d1">1</data>
+</edge>
+<edge source="UNESP" target="UNIFESSPA">
+  <data key="d1">1</data>
+</edge>
+<edge source="UNESP" target="UNEMAT">
+  <data key="d1">1</data>
+</edge>
+<edge source="UNESP" target="EtnoMatemaTicas Brasis">
+  <data key="d1">1</data>
+</edge>
+<edge source="UNESP" target="UEFS">
+  <data key="d1">1</data>
+</edge>
+<edge source="UNESP" target="UNIR">
+  <data key="d1">1</data>
+</edge>
+<edge source="UNESP" target="UNICAMP">
+  <data key="d1">1</data>
+</edge>
+<edge source="EtnoMatemaTicas Brasis" target="UEFS">
+  <data key="d1">1</data>
+</edge>
+<edge source="Estadual, PR" target="UEM">
+  <data key="d1">1</data>
+</edge>
+<edge source="Estadual, PR" target="UFGD">
+  <data key="d1">1</data>
+</edge>
+<edge source="UEM" target="UFGD">
+  <data key="d1">2</data>
+</edge>
+<edge source="UFMA" target="UFSCar">
+  <data key="d1">1</data>
+</edge>
+<edge source="UFMA" target="IFMA">
+  <data key="d1">2</data>
+</edge>
+<edge source="UFMA" target="UEPB">
+  <data key="d1">1</data>
+</edge>
+<edge source="UFMA" target="UEMA">
+  <data key="d1">1</data>
+</edge>
+<edge source="UFSCar" target="UFU">
+  <data key="d1">1</data>
+</edge>
+<edge source="IFMA" target="UEPB">
+  <data key="d1">1</data>
+</edge>
+<edge source="UFU" target="USP">
+  <data key="d1">1</data>
+</edge>
+<edge source="IFRN" target="UFRN">
+  <data key="d1">1</data>
+</edge>
+<edge source="UFRN" target="UFC">
+  <data key="d1">1</data>
+</edge>
+<edge source="UFRN" target="UNILAB">
+  <data key="d1">1</data>
+</edge>
+<edge source="UFC" target="UNILAB">
+  <data key="d1">2</data>
+</edge>
+<edge source="IFES" target="UFES">
+  <data key="d1">2</data>
+</edge>
+<edge source="UFOP" target="UFT">
+  <data key="d1">1</data>
+</edge>
+<edge source="UFOP" target="UFRB">
+  <data key="d1">1</data>
+</edge>
+<edge source="UFT" target="UFRB">
+  <data key="d1">1</data>
+</edge>
+<edge source="UFT" target="UFNT">
+  <data key="d1">1</data>
+</edge>
+<edge source="UFRB" target="UESB">
+  <data key="d1">1</data>
+</edge>
+<edge source="UFNT" target="UFAM">
+  <data key="d1">1</data>
+</edge>
+<edge source="IFRR" target="Municipal, RR">
+  <data key="d1">1</data>
+</edge>
+<edge source="UFG" target="UnB">
+  <data key="d1">1</data>
+</edge>
+</graph></graphml>

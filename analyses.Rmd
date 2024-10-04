@@ -74,9 +74,6 @@ Nordeste = c("AL", "BA", "CE", "MA", "PB", "PE", "PI", "RN", "SE")
 # Produções por Estado, Instituição e Autor
 ```{r}
 merge(I, T) %>%
-  filter(
-    !is.na(Estado)
-  ) %>%
   group_by(Pdf) %>%
   mutate(
     Região = ifelse(Estado %in% Nordeste, "Nordeste", "Outra"),
@@ -96,11 +93,12 @@ merge(I, T) %>%
   filter(
     Estado %in% Nordeste
   ) %>%
-  select(Autor, Estado, Eixo, Modalidade) %>%
+  select(Pdf, Estado, Eixo, Modalidade) %>%
   distinct() %>%
   ggplot(aes(Estado, fill = Eixo)) +
   geom_bar(position = "stack") +
   scale_x_discrete(drop = FALSE) +
+  scale_y_continuous(breaks = pretty_breaks()) +
   scale_fill_viridis(discrete=TRUE, option="turbo") +
   facet_grid(. ~ Modalidade) +
   labs(
@@ -111,14 +109,14 @@ merge(I, T) %>%
     legend.direction = "vertical"
   )
 
-I %>%
+merge(I, T) %>%
   filter(
     Estado %in% Nordeste
   ) %>%
-  select(Autor, Instituição) %>%
+  select(Pdf, Instituição, Modalidade) %>%
   distinct() %>%
-  ggplot(aes(y = Instituição)) +
-  geom_bar()
+  ggplot(aes(y = Instituição, fill = Modalidade)) +
+  geom_bar(position = 'stack')
 ```
 
 # Frequência de termos
@@ -187,37 +185,35 @@ merge(F, I, all = TRUE) %>%
     Autor == Autor[1]
   ) %>%
   select(-Autor) %>%
-  count(Pdf, Modalidade, Eixo, Termo) %>%
+  count(Pdf, Modalidade, Termo) %>%
   group_by(Pdf) %>%
   mutate(
     Proporção = n / sum(n),
     Proporção = ifelse(is.na(Proporção), 0, Proporção)
   ) %>%
   ungroup() %>%
-  complete(Pdf, Modalidade, Eixo, Termo, fill=list(Proporção=0), explicit=TRUE) %>%
+  complete(Pdf, Modalidade, Termo, fill=list(Proporção=0), explicit=TRUE) %>%
   ungroup() %>%
-  group_by(Modalidade, Eixo, Termo) %>%
+  group_by(Modalidade, Termo) %>%
   summarise(
     Proporção = mean(Proporção)
   ) %>%
   arrange(-Proporção) %>%
   filter(
-    row_number() <= 5,
+    row_number() <= 15,
     Proporção > 0
   ) %>%
   group_by(Termo) %>%
   mutate(
     n = n()
   ) %>%
-  ggplot(aes(y = Termo, x = Proporção, fill = Eixo)) +
+  ggplot(aes(y = Termo, x = Proporção)) +
   geom_bar(stat='identity', position = position_stack()) +
   scale_fill_viridis(discrete=TRUE, option="turbo") +
   facet_wrap(Modalidade ~ ., scales = "free") +
   labs(
-    title = "Corpus textual",
-    subtitle = "Anais 7º CBEm",
-    y = "Termos",
-    X = "Proporção"
+    y = NULL,
+    x = NULL
   ) +
   theme(
     legend.position="bottom",
@@ -306,6 +302,7 @@ plot(
   edge.label.cex=2,
   vertex.color = factor(is_nordeste)
 )
+
 ```
 
 # Tf-Idf
